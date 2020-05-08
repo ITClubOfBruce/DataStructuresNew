@@ -116,4 +116,81 @@ rear                   front
            如果打印中，需要结合随机的打印的页数，计算打印的时间
            打印结束后，将打印机状态设置为空闲
 '''
+import random
+from pythonds.basic.queue import Queue
 
+class Printer:
+    def __init__(self,ppm):
+        # 设置打印的速率
+        self.pagerate = ppm
+        self.currentTask = None
+        # 打印机当前任务的剩余时间
+        self.timeRemaining = 0
+
+    # 内部任务需要的时间计算函数
+    def tick(self):
+        if self.currentTask != None: 
+            self.timeRemaining = self.timeRemaining - 1
+            if self.timeRemaining <= 0:
+                self.currentTask = None
+    
+    # 切换打印机状态
+    def is_busy(self):
+        if self.currentTask != None:
+            return True
+        else:
+            return False
+
+    def startNew(self,newTask):
+        self.currentTask = newTask
+        self.timeRemaining = newTask.getPages()*60/self.pagerate
+
+
+class Task:
+    def __init__(self,time):
+        self.timestamp = time
+        self.pages = random.randrange(1,21)
+    
+    def getStamp(self):
+        return self.timestamp
+    
+    def getPages(self):
+        return self.pages
+    
+    def waitTime(self,currenttime):
+        return currenttime - self.timestamp
+
+
+
+def simulation(numSeconds,pagesPerMinute):
+    labPrinter = Printer(pagesPerMinute)
+    printQueue = Queue()
+    watingtimes = []
+
+    for currentSecond in range(numSeconds):
+        if newPrintTask():
+            task = Task(currentSecond)
+            printQueue.enqueue(task)
+        if(not labPrinter.is_busy()) and (not printQueue.isEmpty()):
+            nexttask = printQueue.dequeue()
+            watingtimes.append(nexttask.waitTime(currentSecond))
+            labPrinter.startNew(nexttask)
+
+        labPrinter.tick()
+    averageWait=sum(watingtimes)/len(watingtimes)
+    print("平均等待时间 %6.2f secs 剩下%3d任务"%(averageWait,printQueue.size()))
+def newPrintTask():
+    num = random.randrange(1,181)
+    if num == 180:
+        return True
+    else:
+        return False
+
+for i in range(10):
+    simulation(3600,10)
+
+
+'''
+    1. 学生数变为20
+    2. 不局限在一个小时之内的话，这些学生都打印完需要多长时间
+'''
