@@ -63,17 +63,74 @@
         5！= 5*4*3*2*1
         n == 1
 
+        def fact(n):
+            if n == 1 or n == 0:
+                return 1
+            else:
+                return n*fact(n-1)
 
+        print(fact(5))
+
+
+
+    四、递归  LeetCode 第405题
+        给定一个整数，编写一个算法将这个数转换为十六进制数。
+        对于负整数，我们通常使用补码运算方法
+
+        给定一个整数，转换成任意进制表示的字符串格式
+        769  转换成  字符串 769
+        str = "0123456789"
+        769/10    =   76  余  9
+        76/10     =   7   余  6
+        7/10      =   0   余  7
+
+        str[9] + str[6] + str[7]
+
+# 2,8,10,16 进制
+
+def to_str(num,base):
+    convert_str = "0123456789ABCDEF"
+    if num < base:
+        return convert_str[num]
+    else:
+        return to_str(num//base,base) + convert_str[num%base]
+
+print(to_str(769,10))
+print(to_str(769,2))
+print(to_str(769,8))
+print(to_str(769,16))
+
+
+301
+3*16^2 + 0 + 1*16^0
+
+1401
+1*8^3 + 4*8^2 + 0 + 1*8^0
+
+
+# 967   =>    769    栈   后进先出
+
+     ------------
+底        967      顶    769
+     ------------
+
+可以用栈的方式实现递归
 
 '''
-def fact(n):
-    if n == 1 or n == 0:
-        return 1
-    else:
-        return n*fact(n-1)
+from pythonds.basic.stack import Stack
+s = Stack()
 
-print(fact(5))
+def to_str(num,base):
+    convert_str = "0123456789ABCDEF"
+    while num > 0:
+        if num < base:
+            s.push(convert_str[num])
+        else:
+            s.push(convert_str[num%base])
+        num = num//base
+    result = ""
+    while not s.isEmpty():
+        result = result + s.pop()
+    return result
 
-
-
-
+print(to_str(769,16))
