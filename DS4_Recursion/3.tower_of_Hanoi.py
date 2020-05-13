@@ -73,7 +73,8 @@ move(5,"A","B","C")
 # turtle   GUI库绘制迷宫地图
 
 import turtle
-self.wn = turtle.Screen()
+myWin = turtle.Screen()
+
 class Maze:
     def __init__(self,mazeFileName):
         rowsInMaze = 0
