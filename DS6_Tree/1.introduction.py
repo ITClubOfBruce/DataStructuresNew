@@ -99,7 +99,43 @@ print(r.getRightChild().getRootVal())
       如果当前符号是数字，将当前节点的根值设置为该数字并返回父节点
       如果当前符号是“)”，则转到当前节点的父节点
 '''
+from pythonds.basic.stack import Stack
 from pythonds.trees.binaryTree import BinaryTree
 
+def buildParseTree(fpexp):
+    fplist = fpexp.split()
+    pStack = Stack()
+    eTree = BinaryTree('')
+    pStack.push(eTree)
+
+    for i in fplist:
+        if i == '(':
+            # 如果当前符号是“(”,添加一个新节点作为当前节点的左子节点，并且下降到左子节点
+            eTree.insertLeft('')
+            pStack.push(eTree)
+            eTree = eTree.getLeftChild()
+        elif i not in ['+','-','/','*',')']:
+            # 如果当前符号是数字，将当前节点的根值设置为该数字并返回父节点
+            eTree.setRootVal(int(i))
+            parent = pStack.pop()
+            eTree = parent
+        elif i in ['+','-','/','*']:
+            eTree.setRootVal(i)
+            eTree.insertRight('')
+            pStack.push(eTree)
+            eTree = eTree.getRightChild()
+        elif i == ')':
+            eTree = pStack.pop()
+        else:
+            raise ValueError
+    
+    return eTree
+
+fpexp = "( ( 7 + 3 ) * ( 5 - 2 ) )"
+parseTree = buildParseTree(fpexp)
+parseTree.postorder()
 
 
+# 定义一个函数，使用以上的构建函数，计算出完全表达式( ( 7 + 3 ) * ( 5 - 2 ) )的结果
+def evaluate(parseTree):
+    pass
